@@ -311,6 +311,13 @@
             attachToKo(ko);
             weakMapFactory = function() { return new WM(); };
             module.exports = ko;
+        } else if (typeof global.define === 'function' && global.define.amd) {
+            global.define(['knockout'], function(koModule) {
+                ko = koModule;
+                attachToKo(koModule);
+                weakMapFactory = function() { return new global.WeakMap(); };
+                return koModule;
+            });
         } else if ('ko' in global) {
             // Non-module case - attach to the global instance, and assume a global WeakMap constructor
             ko = global.ko;
