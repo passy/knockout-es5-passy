@@ -1,11 +1,13 @@
 /*!
- * Knockout ES5 plugin - https://github.com/SteveSanderson/knockout-es5
+ * Knockout ES5 plugin - https://github.com/passy/knockout-es5-passy
  * Copyright (c) Steve Sanderson
  * MIT license
  */
 
-(function(global, undefined) {
+(function (global, undefined) {
     'use strict';
+
+    var ko;
 
     // Model tracking
     // --------------
@@ -41,18 +43,22 @@
             throw new Error('When calling ko.track, you must pass an object as the first parameter.');
         }
 
-        var ko = this,
-            allObservablesForObject = getAllObservablesForObject(obj, true);
+        var allObservablesForObject = getAllObservablesForObject(obj, true);
         propertyNames = propertyNames || Object.getOwnPropertyNames(obj);
 
-        propertyNames.forEach(function(propertyName) {
+        propertyNames.forEach(function (propertyName) {
             // Skip properties that are already tracked
             if (propertyName in allObservablesForObject) {
                 return;
             }
 
+            // Skip properties where descriptor can't be redefined
+            if (false === Object.getOwnPropertyDescriptor(obj, propertyName).configurable) {
+                return;
+            }
+
             var origValue = obj[propertyName],
-                isArray = origValue instanceof Array,
+                isArray = origValue && origValue.constructor.name === 'Array',
                 observable = ko.isObservable(origValue) ? origValue
                                               : isArray ? ko.observableArray(origValue)
                                                         : ko.observable(origValue);
@@ -203,9 +209,9 @@
 
     // After each array mutation, fires a notification on the given subscribable
     function wrapStandardArrayMutators(arrayInstance, subscribable, notificationPauseSignal) {
-        ['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'].forEach(function(fnName) {
+        ['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'].forEach(function (fnName) {
             var origMutator = arrayInstance[fnName];
-            arrayInstance[fnName] = function() {
+            arrayInstance[fnName] = function () {
                 var result = origMutator.apply(this, arguments);
                 if (notificationPauseSignal.pause !== true) {
                     subscribable.notifySubscribers(this);
@@ -217,11 +223,11 @@
 
     // Adds Knockout's additional array mutation functions to the array
     function addKnockoutArrayMutators(ko, arrayInstance, subscribable, notificationPauseSignal) {
-        ['remove', 'removeAll', 'destroy', 'destroyAll', 'replace'].forEach(function(fnName) {
+        ['remove', 'removeAll', 'destroy', 'destroyAll', 'replace'].forEach(function (fnName) {
             // Make it a non-enumerable property for consistency with standard Array functions
             Object.defineProperty(arrayInstance, fnName, {
                 enumerable: false,
-                value: function() {
+                value: function () {
                     var result;
 
                     // These additional array mutators are built using the underlying push/pop/etc.
@@ -256,7 +262,7 @@
     // you can subscribe to the property, e.g.:
     //
     //     ko.getObservable(model, 'propertyName')
-    //       .subscribe(function(newValue) { ... });
+    //       .subscribe(function (newValue) { ... });
     function getObservable(obj, propertyName) {
         if (!obj || typeof obj !== 'object') {
             return null;
@@ -300,22 +306,23 @@
     function prepareExports() {
         if (typeof module !== 'undefined') {
             // Node.js case - load KO and WeakMap modules synchronously
-            var ko = require('knockout'),
-                WM = require('weakmap');
+            ko = require('knockout');
+            var WM = require('weakmap');
             attachToKo(ko);
-            weakMapFactory = function() { return new WM(); };
+            weakMapFactory = function () { return new WM(); };
             module.exports = ko;
-        }
-        else if (typeof global.define === 'function' && global.define.amd) {
-            global.define(['knockout'], function(ko) {
-                attachToKo(ko);
-                weakMapFactory = function() { return new global.WeakMap(); };
-                return ko;
+        } else if (typeof global.define === 'function' && global.define.amd) {
+            global.define(['knockout'], function (koModule) {
+                ko = koModule;
+                attachToKo(koModule);
+                weakMapFactory = function () { return new global.WeakMap(); };
+                return koModule;
             });
         } else if ('ko' in global) {
             // Non-module case - attach to the global instance, and assume a global WeakMap constructor
+            ko = global.ko;
             attachToKo(global.ko);
-            weakMapFactory = function() { return new global.WeakMap(); };
+            weakMapFactory = function () { return new global.WeakMap(); };
         }
     }
 
