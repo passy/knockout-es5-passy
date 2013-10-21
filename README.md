@@ -1,6 +1,8 @@
 knockout-es5-passy
 ==================
 
+[![Build Status](https://travis-ci.org/passy/knockout-es5-passy.png)](https://travis-ci.org/passy/knockout-es5-passy)
+
 Fork of [knockout-es5](https://github.com/SteveSanderson/knockout-es5) by
 [Steve Sanderson](https://github.com/SteveSanderson/) since it doesn't seem to
 get updated anymore.
