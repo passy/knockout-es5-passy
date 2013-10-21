@@ -1,13 +1,20 @@
-knockout-es5
-============
+knockout-es5-passy
+==================
+
+Fork of [knockout-es5](https://github.com/SteveSanderson/knockout-es5) by
+[Steve Sanderson](https://github.com/SteveSanderson/) since it doesn't seem to
+get updated anymore.
 
 Knockout.js meets ECMAScript 5 properties. Read the [introduction and basic usage guide](http://blog.stevensanderson.com/2013/05/20/knockout-es5-a-plugin-to-simplify-your-syntax/).
 
 Installation
 ============
 
-To use in a client-side web application, get a copy of the [`knockout-es5.min.js` file](https://raw.github.com/SteveSanderson/knockout-es5/master/dist/knockout-es5.min.js),
-and just add a `<script>` tag referencing at. Be sure to place the reference *after* your reference to Knockout itself:
+To use in a client-side web application, install it via bower:
+
+    bower install --save knockout-es5-passy
+
+Be sure to place the reference *after* your reference to Knockout itself:
 
     <script src='knockout-x.y.z.js'></script>
     <script src='knockout-es5.min.js'></script>
@@ -34,15 +41,15 @@ Third, use NPM to download all the dependencies for this module:
 Now you can build the package (linting and running tests along the way):
 
     grunt
-    
+
 Or you can just run the linting tool and tests:
 
     grunt test
-    
+
 Or you can make Grunt watch for changes to the sources/specs and auto-rebuild after each change:
-    
+
     grunt watch
-    
+
 The browser-ready output files will be dumped at the following locations:
 
  * `dist/knockout-es5.js`
