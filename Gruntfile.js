@@ -4,7 +4,9 @@ module.exports = function (grunt) {
         pkg: grunt.file.readJSON('package.json'),
         jshint: {
             all: ['src/knockout-es5.js'],
-            jshintrc: '.jshintrc'
+            options: {
+                jshintrc: '.jshintrc'
+            }
         },
         concat: {
             dist: {
