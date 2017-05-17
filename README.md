@@ -1,6 +1,8 @@
 knockout-es5-passy
 ==================
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/passy/knockout-es5-passy.svg)](https://greenkeeper.io/)
+
 [![Build Status](https://travis-ci.org/passy/knockout-es5-passy.png)](https://travis-ci.org/passy/knockout-es5-passy)
 
 Fork of [knockout-es5](https://github.com/SteveSanderson/knockout-es5) by
